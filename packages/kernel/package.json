@@ -17,16 +17,14 @@
     "sucrase": "^3.35.0",
     "ws": "^8.18.0",
     "@quantumaudio/music-ir": "^0.1.0",
-    "@quantumaudio/ableton-mcp-schemas": "^0.1.0",
-    "@ableton-extensions/sdk": "file:../../../../vendor/extensions-sdk-1.0.0-beta.0/ableton-extensions-sdk-1.0.0-beta.0.tgz"
+    "@quantumaudio/ableton-mcp-schemas": "^0.1.0"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",
     "@types/ws": "^8.5.12",
     "esbuild": "0.28.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.9.3",
-    "@ableton-extensions/cli": "file:../../../../vendor/extensions-sdk-1.0.0-beta.0/ableton-extensions-cli-1.0.0-beta.0.tgz"
+    "typescript": "^5.9.3"
   },
   "license": "Apache-2.0"
 }
