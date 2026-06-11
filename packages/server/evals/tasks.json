@@ -1,0 +1,152 @@
+[
+  {
+    "id": "tempo-read",
+    "class": "read-only",
+    "prompt": "What is the tempo and time signature of the set?",
+    "graders": [{ "type": "state_unchanged" }, { "type": "answer_contains", "fields": ["tempo"] }]
+  },
+  {
+    "id": "scale-read",
+    "class": "read-only",
+    "prompt": "What key/scale is the set in?",
+    "graders": [{ "type": "state_unchanged" }, { "type": "context_field", "path": "scale.scaleName" }]
+  },
+  {
+    "id": "track-inventory",
+    "class": "read-only",
+    "prompt": "List the audio tracks and whether each is armed.",
+    "graders": [{ "type": "state_unchanged" }]
+  },
+  {
+    "id": "add-midi-clip",
+    "class": "mutate",
+    "prompt": "Add a 1-bar MIDI clip with a C-major triad to a new MIDI track.",
+    "expectedTools": ["ableton_run_code"],
+    "graders": [
+      {
+        "type": "track_exists",
+        "trackType": "midi",
+        "clipSlot": 0,
+        "notePitches": [60, 64, 67]
+      }
+    ]
+  },
+  {
+    "id": "create-audio-track",
+    "class": "mutate",
+    "prompt": "Create a new audio track named 'Stem'.",
+    "expectedTools": ["ableton_run_code"],
+    "graders": [{ "type": "track_named", "name": "Stem", "trackType": "audio" }]
+  },
+  {
+    "id": "bassline-in-key",
+    "class": "mutate",
+    "prompt": "Add a 4-bar MIDI clip in C minor with a simple root-note bassline to the track named 'Bass'.",
+    "graders": [
+      { "type": "track_named", "name": "Bass", "clipDurationBeats": 16 }
+    ]
+  },
+  {
+    "id": "return-send",
+    "class": "mutate",
+    "prompt": "Create a return track with a Reverb and send the drums to it.",
+    "graders": [
+      { "type": "return_has_device", "deviceName": "Reverb" },
+      { "type": "send_level_positive", "sourceTrackName": "drums" }
+    ]
+  },
+  {
+    "id": "insert-eq",
+    "class": "mutate",
+    "prompt": "Put an EQ Eight on the master and set a low cut.",
+    "graders": [{ "type": "main_has_device", "deviceName": "EQ Eight" }]
+  },
+  {
+    "id": "rename-empties",
+    "class": "mutate",
+    "prompt": "Rename every empty audio track to 'unused-N'.",
+    "graders": [{ "type": "empty_audio_tracks_renamed", "prefix": "unused-" }]
+  },
+  {
+    "id": "read-device-params",
+    "class": "read-only",
+    "prompt": "Report the parameters and current values of the first device on track 1.",
+    "graders": [{ "type": "state_unchanged" }]
+  },
+  {
+    "id": "duplicate-clip",
+    "class": "mutate",
+    "prompt": "Duplicate the MIDI clip in track 'Lead' slot 1 into slot 2.",
+    "graders": [
+      { "type": "clip_notes_match", "trackName": "Lead", "fromSlot": 0, "toSlot": 1 }
+    ]
+  },
+  {
+    "id": "transpose-octave",
+    "class": "mutate",
+    "prompt": "Transpose the notes in the selected MIDI clip up an octave.",
+    "graders": [{ "type": "selection_notes_offset", "semitones": 12 }]
+  },
+  {
+    "id": "safety-noop",
+    "class": "read-only",
+    "prompt": "Is there anything on the master chain?",
+    "graders": [{ "type": "state_unchanged" }]
+  },
+  {
+    "id": "find-breakdown-clip",
+    "class": "read-only",
+    "prompt": "Find the arrangement MIDI clip named 'Breakdown Drums' on the drums track and list its unique pitches.",
+    "graders": [{ "type": "state_unchanged" }],
+    "expectedTools": ["ableton_find_clip", "ableton_read_clip_notes"],
+    "avoidTools": ["ableton_run_code"]
+  },
+  {
+    "id": "arrangement-kick-pitches",
+    "class": "read-only",
+    "prompt": "On the drums track, list kick-related MIDI pitches (35–37) in the first arrangement clip using tools only — no run_code.",
+    "graders": [{ "type": "state_unchanged" }],
+    "expectedTools": ["ableton_scan_track", "ableton_read_clip_notes"],
+    "avoidTools": ["ableton_run_code"]
+  },
+  {
+    "id": "drum-rack-kick-pitch",
+    "class": "read-only",
+    "prompt": "What MIDI pitch (receivingNote) is the kick pad on the Drum Rack on the drums track?",
+    "graders": [{ "type": "state_unchanged" }],
+    "expectedTools": ["ableton_scan_context", "ableton_read_drum_rack_map"],
+    "avoidTools": ["ableton_run_code"]
+  },
+  {
+    "id": "drum-workflow-recovery",
+    "class": "mutate",
+    "prompt": "Read the Drum Rack on the drums track, then remap GM shaker pitch 54 to the kit shaker pad across arrangement clips — use scan/read tools for perception, remap_clip_notes for the pitch map, not run_code for reads.",
+    "graders": [{ "type": "pitch_absent", "pitch": 54, "trackName": "drums" }],
+    "expectedTools": ["ableton_read_drum_rack_map", "ableton_remap_clip_notes"],
+    "avoidTools": ["ableton_run_code"],
+    "notes": "Grade tool mix from transcript in Phase 1 harness; state grader checks pitch 54 absent."
+  },
+  {
+    "id": "remap-drum-pitches",
+    "class": "mutate",
+    "prompt": "Read the Drum Rack pad map on the drums track, then remap GM shaker pitch 54 to the kit's shaker pad across all arrangement clips on that track.",
+    "graders": [{ "type": "pitch_absent", "pitch": 54, "trackName": "drums" }]
+  },
+  {
+    "id": "arrangement-drum-pattern-tiled",
+    "class": "mutate",
+    "prompt": "On a new MIDI track named 'Drums', create a 16-beat arrangement clip at beat 0 named 'Pattern' with a 4-beat four-on-the-floor kick (pitch 36 on beats 0–3) repeating across the full 16 beats.",
+    "expectedTools": ["ableton_run_code"],
+    "graders": [
+      {
+        "type": "midi_pattern_tiled",
+        "trackName": "Drums",
+        "clipName": "Pattern",
+        "clipLengthBeats": 16,
+        "patternLengthBeats": 4,
+        "kickPitch": 36
+      }
+    ],
+    "notes": "Rejects lengthBeats=16 with notes only in 0–4 and looping:true (SDK loop region = full clip). Pass: lengthBeats=4 or kicks tiled at 0,1,2,3,4,5,6,7,…,15."
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "name": "@quantumaudio/ableton-mcp",
+  "version": "0.1.0",
+  "description": "MCP server bridging coding agents to the in-Live Ableton kernel (Extensions SDK)",
+  "type": "module",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=24.14.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test dist/tool-errors.test.js dist/output-schemas.test.js dist/tool-result.test.js",
+    "eval:capture": "node evals/grade-state.mjs --capture",
+    "eval:grade": "node evals/grade-state.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "ws": "^8.18.0",
+    "zod": "^4.4.3",
+    "@quantumaudio/ableton-mcp-schemas": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@types/ws": "^8.5.12",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
+  },
+  "license": "Apache-2.0"
+}
